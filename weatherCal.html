@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <?!= HtmlService.createHtmlOutputFromFile('css').getContent() ?>
+  </head>
+<body>
+<form name="form1">
+<table border=5>
+<tr>
+<td id="month"></td>
+<td id="date"></td>
+<td id="day"></td>
+<td id = "we"><img id="weather"></td>
+</tr>
+</table>
+<input type="text" id="out" />
+<input id="checkbox1" type="checkbox" value="1">
+</form>
+</body>
+<script>
+var youbi_yomi =["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"];
+const youbi =["にち","げつ","か","すい","もく","きん","ど"];
+const tenki_yomi={雨:"雨です。",晴:"晴れです。",曇:"曇りです。",雪:"雪です。"};
+const tenki_eng={雨:"rainy",晴:"sunny",曇:"cloudy ",雪:"snowy"};
+var mnt = document.getElementById("month");
+var dat = document.getElementById("date");
+var day = document.getElementById("day");
+var wth = document.getElementById("weather");
+var out = document.getElementById("out");
+var ch = document.getElementById("checkbox1");
+
+const telop = "曇時々雨";
+var checkDate = "2020-06-22".slice(-5);
+var today = new Date();
+var checkToday=('0' + (today.getMonth() + 1)).slice(-2)+ '-' + ('0' + today.getDate()).slice(-2);
+var kyouha = "今日は";
+/*
+window.onload = function(){
+    alert(checkToday+" "+(checkToday==checkDate));    
+}
+*/
+var voices = speechSynthesis.getVoices();
+
+mnt.textContent = today.getMonth()+1;
+dat.textContent = today.getDate();
+day.textContent = youbi[today.getDay()];
+wth.src = tenki_eng[editWeather()]+'.png';
+
+mnt.addEventListener('click', function(){
+    output(mnt.textContent+'月');
+    mnt.style.opacity="1.0";
+    ch.checked = true;
+}, false);
+
+dat.addEventListener('click', function(){
+   output(dat.textContent+'日');
+   dat.style.opacity="1.0";
+   ch.checked = true;
+}, false);
+
+day.addEventListener('click', function(){
+    output(youbi_yomi[today.getDay()]);
+    day.style.opacity="1.0";
+    ch.checked = true;
+}, false);
+
+wth.addEventListener('click', function(){
+    we.style.opacity="1.0";
+    output(tenki_yomi[editWeather()]);
+    outputInEng(tenki_eng[editWeather()]);
+    ch.checked = true;
+}, false);
+
+
+function editWeather(){
+    var result = telop.charAt(0);
+    if(telop.indexOf("雨")!=-1){ // rain 
+        result = "雨";
+    }else if(telop.indexOf("雪")==-1){ // snow 
+        result = "雪";
+    }
+    return result;
+}
+
+function output(str){
+   var txt = document.getElementById("out");
+   if(ch.checked)
+        kyouha = "";
+   txt.value = kyouha + str;
+   const uttr = new SpeechSynthesisUtterance(txt.value);
+   uttr.lang = "ja-JP";
+  // 発言を再生 (発言キューに発言を追加)
+  speechSynthesis.speak(uttr);
+}
+
+function outputInEng(str){
+   var txt = document.getElementById("out");
+   txt.value = "It's "+str+".";
+   const uttr = new SpeechSynthesisUtterance(txt.value);
+   uttr.lang = "en-US";
+  // 発言を再生 (発言キューに発言を追加)
+  speechSynthesis.speak(uttr);
+}
+
+
+
+</script>
+
+</html>
