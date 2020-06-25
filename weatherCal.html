@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <?!= HtmlService.createHtmlOutputFromFile('css').getContent() ?>
+  </head>
+<body>
+<form name="form1">
+<table>
+<tr id="top"><td colspan="6"></td></tr>
+<tr id="middle">
+<td class="side"></td>
+<td id="month"></td>
+<td id="date"></td>
+<td id="day"></td>
+<td class="side"></td>
+<td id = "we"  rowspan="2"><img id="weather"></td>
+</tr>
+<tr id="buttom">
+<td></td>
+<td>がつ</td>
+<td>にち</td>
+<td>ようび</td>
+<td></td>
+</tr>
+</table>
+
+<input type="text" id="out" />
+<input id="checkbox1" type="checkbox" value="1">
+</form>
+</body>
+<script>
+var youbi_yomi =["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"];
+const youbi =["にち","げつ","か","すい","もく","きん","ど"];
+const tenki_yomi={雨:"雨です。",晴:"晴れです。",曇:"曇りです。",雪:"雪です。"};
+const tenki_eng={雨:"rainy",晴:"sunny",曇:"cloudy",雪:"snowy"};
+var mnt = document.getElementById("month");
+var dat = document.getElementById("date");
+var day = document.getElementById("day");
+var wth = document.getElementById("weather");
+var out = document.getElementById("out");
+var ch = document.getElementById("checkbox1");
+
+const telop = <?= getTelop() ?>;
+var checkDate = <?= getDate() ?>.slice(-5);
+var today = new Date();
+var checkToday=('0' + (today.getMonth() + 1)).slice(-2)+ '-' + ('0' + today.getDate()).slice(-2);
+var kyouha = "今日は";
+
+window.onload = function(){
+    //(checkToday+" "+(checkToday==checkDate));
+      console.log(telop);
+  console.log(checkToday);
+}
+
+var voices = speechSynthesis.getVoices();
+
+mnt.textContent = today.getMonth()+1;
+dat.textContent = today.getDate();
+day.textContent = youbi[today.getDay()];
+wth.src = 'https://meganeika.github.io/weatherCalender/'+tenki_eng[editWeather()]+'.png';
+
+mnt.addEventListener('click', function(){
+    output(mnt.textContent+'月');
+    mnt.style.opacity="1.0";
+    ch.checked = true;
+}, false);
+
+dat.addEventListener('click', function(){
+   output(dat.textContent+' にち');
+   dat.style.opacity="1.0";
+   ch.checked = true;
+}, false);
+
+day.addEventListener('click', function(){
+    output(youbi_yomi[today.getDay()]);
+    day.style.opacity="1.0";
+    ch.checked = true;
+}, false);
+
+wth.addEventListener('click', function(){
+    we.style.opacity="1.0";
+    output(tenki_yomi[editWeather()]);
+    outputInEng(tenki_eng[editWeather()]);
+    ch.checked = true;
+}, false);
+
+
+function editWeather(){
+    var result = telop.charAt(0);
+    if(telop.indexOf("雨")!=-1){ // rain 
+        result = "雨";
+    }else if(telop.indexOf("雪")!=-1){ // snow 
+        result = "雪";
+    }
+    return result;
+}
+
+function output(str){
+   var txt = document.getElementById("out");
+   if(ch.checked)
+        kyouha = "";
+   txt.value = kyouha + str;
+   const uttr = new SpeechSynthesisUtterance(txt.value);
+   uttr.lang = "ja-JP";
+  // 発言を再生 (発言キューに発言を追加)
+  speechSynthesis.speak(uttr);
+}
+
+function outputInEng(str){
+   var txt = document.getElementById("out");
+   txt.value = txt.value + "It's "+str+".";
+   const uttr = new SpeechSynthesisUtterance("It's "+str+".");
+   uttr.lang = "en-US";
+  // 発言を再生 (発言キューに発言を追加)
+  speechSynthesis.speak(uttr);
+}
+
+
+
+</script>
+
+</html>
