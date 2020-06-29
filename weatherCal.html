@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <?!= HtmlService.createHtmlOutputFromFile('css').getContent() ?>
-  </head>
+<head>
+	<title>Local cal</title>
+    <link rel="stylesheet" type="text/css" href="wheather.css">
+</head>
 <body>
 <form name="form1">
 <table>
@@ -15,58 +16,60 @@
 <td class="side"></td>
 <td id = "we"  rowspan="2"><img id="weather"></td>
 </tr>
-<tr id="buttom">
-<td></td>
-<td>ãŒã¤</td>
-<td>ã«ã¡</td>
-<td>ã‚ˆã†ã³</td>
+<tr>
+<td id="buttom"></td>
+<td>‚ª‚Â</td>
+<td>‚É‚¿</td>
+<td>‚æ‚¤‚Ñ</td>
 <td></td>
 </tr>
 </table>
-
 <input type="text" id="out" />
 <input id="checkbox1" type="checkbox" value="1">
+<input id="checkbox2" type="checkbox" value="2">
 </form>
 </body>
 <script>
-var youbi_yomi =["æ—¥æ›œæ—¥","æœˆæ›œæ—¥","ç«æ›œæ—¥","æ°´æ›œæ—¥","æœ¨æ›œæ—¥","é‡‘æ›œæ—¥","åœŸæ›œæ—¥"];
-const youbi =["ã«ã¡","ã’ã¤","ã‹","ã™ã„","ã‚‚ã","ãã‚“","ã©"];
-const tenki_yomi={é›¨:"é›¨ã§ã™ã€‚",æ™´:"æ™´ã‚Œã§ã™ã€‚",æ›‡:"æ›‡ã‚Šã§ã™ã€‚",é›ª:"é›ªã§ã™ã€‚"};
-const tenki_eng={é›¨:"rainy",æ™´:"sunny",æ›‡:"cloudy",é›ª:"snowy"};
+var youbi_yomi =["“ú—j“ú","Œ—j“ú","‰Î—j“ú","…—j“ú","–Ø—j“ú","‹à—j“ú","“y—j“ú"];
+const youbi =["‚É‚¿","‚°‚Â","‚©","‚·‚¢","‚à‚­","‚«‚ñ","‚Ç"];
+const tenki_yomi={‰J:"‰J‚Å‚·B",°:"°‚ê‚Å‚·B",“Ü:"“Ü‚è‚Å‚·B",á:"á‚Å‚·B"};
+const tenki_eng={‰J:"rainy",°:"sunny",“Ü:"cloudy ",á:"snowy"};
 var mnt = document.getElementById("month");
 var dat = document.getElementById("date");
 var day = document.getElementById("day");
 var wth = document.getElementById("weather");
 var out = document.getElementById("out");
 var ch = document.getElementById("checkbox1");
+var ch2 = document.getElementById("checkbox2");
 
-const telop = <?= getTelop() ?>;
-var checkDate = <?= getDate() ?>.slice(-5);
+
+const telop = "“ÜX‰J";
+var checkDate = "2020-06-22".slice(-5);
 var today = new Date();
 var checkToday=('0' + (today.getMonth() + 1)).slice(-2)+ '-' + ('0' + today.getDate()).slice(-2);
-var kyouha = "ä»Šæ—¥ã¯";
-
+var kyouha = "¡“ú‚Í";
+/*
 window.onload = function(){
-    //(checkToday+" "+(checkToday==checkDate));
-      console.log(telop);
-  console.log(checkToday);
+    alert(checkToday+" "+(checkToday==checkDate));    
 }
-
+*/
 var voices = speechSynthesis.getVoices();
-
-mnt.textContent = today.getMonth()+1;
+var _IMG_SIZE_="110px";
+mnt.textContent = "12";//today.getMonth()+1;
 dat.textContent = today.getDate();
 day.textContent = youbi[today.getDay()];
-wth.src = 'https://meganeika.github.io/weatherCalender/'+tenki_eng[editWeather()]+'.png';
+wth.src = tenki_eng[editWeather()]+'.png';
+wth.style.width=_IMG_SIZE_;
+wth.style.width=_IMG_SIZE_;
 
 mnt.addEventListener('click', function(){
-    output(mnt.textContent+'æœˆ');
+    output(mnt.textContent+'Œ');
     mnt.style.opacity="1.0";
     ch.checked = true;
 }, false);
 
 dat.addEventListener('click', function(){
-   output(dat.textContent+' ã«ã¡');
+   output(dat.textContent+'“ú');
    dat.style.opacity="1.0";
    ch.checked = true;
 }, false);
@@ -80,17 +83,19 @@ day.addEventListener('click', function(){
 wth.addEventListener('click', function(){
     we.style.opacity="1.0";
     output(tenki_yomi[editWeather()]);
-    outputInEng(tenki_eng[editWeather()]);
+    if(!ch2.checked)
+        outputInEng(tenki_eng[editWeather()]);
     ch.checked = true;
+    ch2.checked = true;
 }, false);
 
 
 function editWeather(){
     var result = telop.charAt(0);
-    if(telop.indexOf("é›¨")!=-1){ // rain 
-        result = "é›¨";
-    }else if(telop.indexOf("é›ª")!=-1){ // snow 
-        result = "é›ª";
+    if(telop.indexOf("‰J")!=-1){ // rain 
+        result = "‰J";
+    }else if(telop.indexOf("á")==-1){ // snow 
+        result = "á";
     }
     return result;
 }
@@ -102,16 +107,16 @@ function output(str){
    txt.value = kyouha + str;
    const uttr = new SpeechSynthesisUtterance(txt.value);
    uttr.lang = "ja-JP";
-  // ç™ºè¨€ã‚’å†ç”Ÿ (ç™ºè¨€ã‚­ãƒ¥ãƒ¼ã«ç™ºè¨€ã‚’è¿½åŠ )
+  // ”­Œ¾‚ğÄ¶ (”­Œ¾ƒLƒ…[‚É”­Œ¾‚ğ’Ç‰Á)
   speechSynthesis.speak(uttr);
 }
 
 function outputInEng(str){
    var txt = document.getElementById("out");
-   txt.value = txt.value + "It's "+str+".";
-   const uttr = new SpeechSynthesisUtterance("It's "+str+".");
+   txt.value = "It's "+str+".";
+   const uttr = new SpeechSynthesisUtterance(txt.value);
    uttr.lang = "en-US";
-  // ç™ºè¨€ã‚’å†ç”Ÿ (ç™ºè¨€ã‚­ãƒ¥ãƒ¼ã«ç™ºè¨€ã‚’è¿½åŠ )
+  // ”­Œ¾‚ğÄ¶ (”­Œ¾ƒLƒ…[‚É”­Œ¾‚ğ’Ç‰Á)
   speechSynthesis.speak(uttr);
 }
 
