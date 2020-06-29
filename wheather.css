@@ -7,6 +7,7 @@ table{
 	background-size: 570px 388px;
 //    position: absolute;
 //    bottom: 0px;
+	user-select: none;
 }
 td {
     text-align:center;
